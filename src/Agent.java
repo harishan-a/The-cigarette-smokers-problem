@@ -2,44 +2,63 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class Agent implements Runnable{
-    Counter counter;
-    List<String> ingredients;
-    Random random;
+/**
+ * This class represents an Agent who puts random ingredients on the counter.
+ */
+public class Agent implements Runnable {
+    private final Counter counter;
+    private final List<String> ingredients;
+    private final Random random;
 
-    public Agent(Counter counter){
+    /**
+     * Constructor for the Agent class.
+     *
+     * @param counter The counter on which the agent puts ingredients.
+     */
+    public Agent(Counter counter) {
         this.counter = counter;
         this.ingredients = Arrays.asList("Coffee Beans", "Water", "Sugar");
         this.random = new Random();
     }
 
-    public void run(){
-        for(int = 0; i < 21; i++){
-            int index1 = random.nextInt(ingredients.size());
-            int index2 = random.nextInt(ingredients.size());
-
-            while(index1 == index2) {
-                index2 = random.nextInt(ingredients.size());
+    /**
+     * The run method which is executed when the thread for this class is started.
+     * The agent puts random ingredients on the counter 20 times.
+     */
+    @Override
+    public void run() {
+        for (int i = 0; i < 20; i++) {
+            // Generate two different random indices
+            int index1 = getRandomIndex();
+            int index2 = getRandomIndex();
+            while (index1 == index2) {
+                index2 = getRandomIndex();
             }
 
-            String randomIngredient1 = ingredients.get(index1);
-            String randomIngredient2 = ingredients.get(index2);
+            // Get the ingredients at the generated indices
+            List<String> randomIngredients = Arrays.asList(ingredients.get(index1), ingredients.get(index2));
 
+            try {
+                // Put the ingredients on the counter and print a message
+                counter.put(randomIngredients);
+                System.out.printf("Order #%d%nAgent puts %s & %s on counter%n", i + 1, randomIngredients.get(0), randomIngredients.get(1));
 
-            try{
-                counter.put(randomIngredient1);
-                System.out.println("Agent put " + randomIngredient1 + " on the counter");
-
-                counter.put(randomIngredient2);
-                System.out.println("Agent put " + randomIngredient2 + " on the counter");
-
+                // Sleep for a second
                 Thread.sleep(1000);
-            } catch (InterruptedException e){
+            } catch (InterruptedException e) {
+                // If the thread is interrupted, stop its execution
                 Thread.currentThread().interrupt();
                 return;
             }
-
-
         }
+    }
+
+    /**
+     * Generates a random index within the range of the ingredients list.
+     *
+     * @return A random index.
+     */
+    private int getRandomIndex() {
+        return random.nextInt(ingredients.size());
     }
 }
