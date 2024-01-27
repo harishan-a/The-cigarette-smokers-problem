@@ -1,0 +1,33 @@
+@startuml
+class Main {
+  +void main(String[])
+}
+
+class Counter {
+  -List<String> ingredients
+  +void put(List<String>)
+  +List<String> get()
+  +void clear()
+}
+
+class Barista {
+  -Counter counter
+  -List<String> ingredientsNeeded
+  +Barista(Counter, List<String>)
+  +void run()
+}
+
+class Agent {
+  -Counter counter
+  -List<String> ingredients
+  -Random random
+  +Agent(Counter)
+  +void run()
+}
+
+Main .down.> Counter : creates
+Main .right.> Agent : creates
+Main .down.> Barista : creates
+Barista -right-> Counter : uses
+Agent -left-> Counter : uses
+@enduml

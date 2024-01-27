@@ -1,0 +1,64 @@
+@startuml
+actor Main
+participant Counter
+participant Agent
+participant "Barista 1" as B1
+participant "Barista 2" as B2
+participant "Barista 3" as B3
+
+create Counter
+Main -> Counter : new
+activate Counter
+
+create Agent
+Main -> Agent : new(Counter)
+activate Agent
+
+create B1
+Main -> B1 : new(Counter, ["Water", "Sugar"])
+activate B1
+
+create B2
+Main -> B2 : new(Counter, ["Coffee Beans", "Sugar"])
+activate B2
+
+create B3
+Main -> B3 : new(Counter, ["Coffee Beans", "Water"])
+activate B3
+
+Main -> Agent : start()
+Main -> B1 : start()
+Main -> B2 : start()
+Main -> B3 : start()
+
+loop Agent Loop
+    Agent -> Counter : put(2 random ingredients)
+    Counter --> Agent : wait for clearance
+
+    alt Barista 1 needs ingredients
+        B1 -> Counter : get()
+        Counter --> B1 : return ingredients
+        B1 -> Counter : clear()
+    else if Barista 2 needs ingredients
+        B2 -> Counter : get()
+        Counter --> B2 : return ingredients
+        B2 -> Counter : clear()
+    else if Barista 3 needs ingredients
+        B3 -> Counter : get()
+        Counter --> B3 : return ingredients
+        B3 -> Counter : clear()
+    end
+end
+
+Main -> Agent : join()
+Main -> B1 : interrupt()
+Main -> B2 : interrupt()
+Main -> B3 : interrupt()
+
+deactivate Agent
+deactivate B1
+deactivate B2
+deactivate B3
+deactivate Counter
+
+@enduml
